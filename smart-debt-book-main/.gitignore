@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+drizzle-generated/
+.next/
+next-env.d.ts
+*.tsbuildinfo

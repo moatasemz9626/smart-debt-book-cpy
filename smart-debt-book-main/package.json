@@ -1,0 +1,38 @@
+{
+  "name": "smart-debt-book",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.mjs",
+    "db:verify": "node --env-file-if-exists=.env scripts/verify.mjs",
+    "typecheck": "tsc --noEmit",
+    "db:local-setup": "node --env-file-if-exists=.env scripts/local-setup.mjs",
+    "test:db": "vitest run",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
+    "drizzle-orm": "^0.44.0",
+    "next": "^16.4.5",
+    "pg": "^8.13.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.11.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "drizzle-kit": "^0.31.0",
+    "eslint": "^10.14.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^3.2.7"
+  }
+}
