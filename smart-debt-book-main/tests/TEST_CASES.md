@@ -44,5 +44,8 @@
 | 38 | Try to directly write protected immutable audit_events/revisions | UPDATE/DELETE rejected |
 | 39 | Customer account balance altered without ledger operation | COMMIT rejects by reconciliation trigger |
 | 40 | Report total and monthly payments after corrections | Dashboard uses active operations only; no double count of reversals/merges |
+| 41 | Record an explicit payment of more than ₪1,000,000 | `400 VALIDATION_FAILED`; explicitly supplied amounts are capped at `100000000` agorot |
+| 42 | Full payment (`full: true`, no `amount_agorot`) on a customer balance above ₪1,000,000 | Single payment of the entire locked balance succeeds if history permits; response returns the actual amount and zero balance |
+| 43 | Full payment request includes both `full: true` and `amount_agorot` | `400 VALIDATION_FAILED`; mutually exclusive request forms |
 
 **Additional releases gates:** measure actual PostgreSQL lock/contention behavior (including deadlocks and timeouts), validate permission RLS against actual Supabase credentials and pooling, perform backup & restore exercise, and run repeated concurrency tests before first real shop data.
