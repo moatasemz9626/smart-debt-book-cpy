@@ -169,6 +169,8 @@ customer twice when an alias also matches. R-01 recent, R-03 and R-05 leave out 
 C-02 … C-05 on a deleted customer → `409 CUSTOMER_DELETED`.
 `cursor` is opaque (base64 of `effective_date, effective_time, created_at, id`).
 
+**MVP frontend scope decision (2026-11-23):** Customer merge (`FR-08`), data export (`FR-18`), customer deletion (`C-07`), and store deletion (`S-08`) are **not supported in the MVP frontend**. Keep the backend/schema/API implementation and documented contracts as-is; this is a frontend scope decision, not an instruction to remove or disable endpoints. Some endpoints may already exist while others are not implemented; their individual statuses below remain authoritative. Customer alias removal (`C-05`) is not customer deletion. Enforce authorization on the server independently of UI visibility.
+
 ### Ledger
 
 | Op | Method & path | W | Input | Output | Errors |
