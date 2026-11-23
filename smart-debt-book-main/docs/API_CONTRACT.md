@@ -66,7 +66,7 @@ JavaScript `number` is a float. It must never hold money.
 | Dates | `effective_date`: `YYYY-MM-DD` in `Asia/Jerusalem`. `effective_time`: `HH:MM`, optional, never invented. Timestamps: ISO 8601 UTC. |
 | IDs | UUID strings. |
 | Language | Error `code` is stable English; `message_ar` is for display. |
-| Limits | `amount_agorot` 1 … `100000000` (₪1,000,000.00) per operation. `description` ≤ 500 chars, `notes` ≤ 1000, `reason` ≤ 500. Customer name / alias 1–180, store name 1–120 (DB checks). `phone`: Israeli number, stored as E.164 (`+9725XXXXXXXX`), optional. Over a limit → `400 VALIDATION_FAILED`. |
+| Limits | Explicitly supplied `amount_agorot`: 1 … `100000000` (₪1,000,000.00) per operation. **Exception:** L-02 `full: true` omits `amount_agorot`; the backend uses the customer's entire locked outstanding balance, even when it exceeds ₪1,000,000. `description` ≤ 500 chars, `notes` ≤ 1000, `reason` ≤ 500. Customer name / alias 1–180, store name 1–120 (DB checks). `phone`: Israeli number, stored as E.164 (`+9725XXXXXXXX`), optional. An explicitly supplied amount over the limit → `400 VALIDATION_FAILED`. |
 
 ### Shared objects
 
@@ -180,6 +180,9 @@ C-02 … C-05 on a deleted customer → `409 CUSTOMER_DELETED`.
 | K-02 | `POST /operations/{id}/cancel` | W | `{ expected_version, reason }` | `LedgerResult` | 404, 409 `STALE_DRAFT`, 422 `OPERATION_NOT_ACTIVE`, 422 `HISTORY_NEGATIVE` |
 
 `amount_agorot` > 0. `full: true` pays exactly the locked balance; the response returns the amount used.
+
+**Full-payment limit exception (L-02):** The ₪1,000,000 cap applies only to explicitly supplied amounts. With `full: true`, the request **must omit** `amount_agorot`; the server locks the customer account and sets the payment amount to its current balance. A balance of ₪1,200,000 (`"120000000"` agorot), for example, is payable in one full-payment request, returning `amount_agorot: "120000000"` and `balance_agorot: "0"`. Sending `amount_agorot: "120000000"` explicitly instead is rejected with `400 VALIDATION_FAILED`. A zero balance still returns `422 NOTHING_TO_PAY`. The usual `expected_version` and historical-balance rules still apply.
+
 `expected_version` for K-01/K-02 is the version of the operation's customer account.
 
 ### Reads, lookup, export
@@ -200,9 +203,11 @@ Decided 2026-11-05:
 - **D1 — Another store's id returns `404 NOT_FOUND`, not 403.** With RLS the server cannot tell
   "another store's customer" from "no such customer" without a privileged lookup, and 403 would
   confirm the id exists. PRD AT-04 ("403") is read as "blocked, nothing leaked".
-- **D2 — Limits** (the docs set none): max ₪1,000,000.00 (`"100000000"`) per operation,
-  description 500, notes 1000, reason 500 characters, phone Israeli and stored as E.164.
-  See "Limits" in section 2.
+- **D2 — Limits** (the earlier docs set none): max ₪1,000,000.00 (`"100000000"`) for
+  **explicitly supplied** operation amounts. L-02 full payment (`full: true`) is an exception:
+  it omits `amount_agorot` and pays the entire locked balance, including balances above this cap.
+  Description 500, notes 1000, reason 500 characters; phone Israeli and stored as E.164.
+  See "Limits" in section 2 and the L-02 full-payment note.
 - **D3 — Statement PDF (FR-17) is rendered in the browser** from the R-04 JSON. No PDF on the server.
 
 Still OPEN (no proposal yet):
