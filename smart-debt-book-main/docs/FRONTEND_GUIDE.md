@@ -174,6 +174,10 @@ server (`OVERPAYMENT`); also disable Save on the card with a clear reason (FR-05
 balance, including balances greater than ₪1,000,000. Do not apply `MAX_OPERATION_AGOROT` to the full-payment option.
 **Never** use `Number()`, `parseFloat()`, `+x`, `toFixed()` or `Math.*` on money (ESLint blocks it on the server).
 
+### Approved MVP feature exclusions (2026-11-23)
+
+Do **not** implement frontend UI or flows for customer merging (`FR-08`), exporting data (`FR-18`), deleting a customer (`C-07`), or deleting a store (`S-08`). These features are deferred to a later release. **Do not change the existing backend** to enforce this frontend scope. Existing endpoint descriptions elsewhere in this guide are backend reference only and **do not constitute MVP UI requirements** for these excluded actions. Alias removal (`C-05`) is separate from deleting a customer and may remain in name management. Existing restore handling is not a new deletion feature. Server-side authorization remains mandatory even when actions are hidden from the UI.
+
 ## 7. Screens → endpoints
 
 All paths are under `/api/v1`. `W` = write (needs `Idempotency-Key`). Response types are in section 8.
