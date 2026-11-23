@@ -81,6 +81,10 @@ npm run dev                   # Next.js on :3000, API under /api/v1
 8. **No success shown before COMMIT.** After a lost response, the client asks for the same
    `request_id` (R-06) before allowing a retry.
 
+## MVP frontend scope — approved 2026-11-23
+
+The owner explicitly deferred **customer merge (FR-08), data export (FR-18), and customer/store deletion (C-07/S-08)** from the MVP frontend. Do not build buttons, screens, menus, or flows for these features in the MVP. Leave the existing backend, database schema, and routes exactly as they are; do not remove or disable backend capabilities to implement this frontend decision. Revisit these features only in a later release upon an explicit product decision. This scope decision does **not** prohibit removing a customer alias (`C-05`), which is ordinary name management, and does not imply removing existing backend restore behavior. Authorization must continue to be enforced server-side; hiding a UI action is not an access-control measure.
+
 ## Decisions already made (do not reopen without asking)
 
 1. Merge customers (FR-08) is **out of the MVP**. Merge columns and enum values stay in the schema, unused.
