@@ -97,7 +97,9 @@ npm run dev                   # Next.js on :3000, API under /api/v1
    does the work in that request. No stored "verified" state.
 9. Timezone: `Asia/Jerusalem` only.
 10. API: money is a JSON string of integer agorot (`"15050"`), `bigint` in code; Node.js runtime,
-    never Edge. Another store's id returns 404, not 403. Limits and the full list: `docs/API_CONTRACT.md`.
+    never Edge. Another store's id returns 404, not 403. Explicitly supplied amounts are capped
+    at ₪1,000,000; L-02 `full: true` omits the amount and pays the whole locked balance even
+    above this cap. Limits and the full list: `docs/API_CONTRACT.md`.
 11. Statement PDF is rendered in the browser from R-04 JSON.
 
 Open risk: no path for a formal data-erasure request. Needs legal advice before public launch.
