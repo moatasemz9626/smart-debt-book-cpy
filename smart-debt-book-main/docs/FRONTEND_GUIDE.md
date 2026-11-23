@@ -168,8 +168,10 @@ const after = BigInt(account.balance_agorot) + (type === 'PAYMENT' ? -amount : a
 body.amount_agorot = amount.toString();
 ```
 
-Limits: 1 … `"100000000"` (₪1,000,000.00) per operation. Payment > balance is refused by the
+Limits for **explicitly entered amounts**: 1 … `"100000000"` (₪1,000,000.00). Payment > balance is refused by the
 server (`OVERPAYMENT`); also disable Save on the card with a clear reason (FR-05).
+**Exception:** `full: true` is not an entered amount. Omit `amount_agorot` and let the server pay the entire locked
+balance, including balances greater than ₪1,000,000. Do not apply `MAX_OPERATION_AGOROT` to the full-payment option.
 **Never** use `Number()`, `parseFloat()`, `+x`, `toFixed()` or `Math.*` on money (ESLint blocks it on the server).
 
 ## 7. Screens → endpoints
@@ -228,7 +230,7 @@ The card does not close on an outside tap; Cancel closes it at once.
 | Payment | `POST /customers/{id}/payments` W same body, or `{ ..., full: true }` without `amount_agorot` to pay exactly the balance |
 | Result | 201 `{ operation_id, amount_agorot, balance_agorot, ledger_version }` |
 
-Full payment: show the exact amount and the zero result before Confirm. Balance 0 → no payment card.
+Full payment: show the exact outstanding balance (even if above ₪1,000,000) and the expected zero result before Confirm. Send `full: true` **without** `amount_agorot`; do not send the displayed balance as an explicit amount, since explicit amounts are capped. The server determines the final amount from the locked account and returns it in `amount_agorot`. Balance 0 → no payment card.
 `effective_date` defaults to today (Asia/Jerusalem); `effective_time` only if the owner set one. Never invent a time.
 A date in the past that would make an earlier day negative → `422 HISTORY_NEGATIVE`.
 
